@@ -1,0 +1,93 @@
+
+<nav class="bg-body-tertiary mt-1">
+    <div class="container-fluid d-flex">
+        <a class="navbar-brand" href="#">
+            <img src="../assets/Badge_of_the_Indian_Air_Force.png" alt="Airforce" width="50">
+        </a>
+        <span class="d-flex align-items-center"><h1 class="navbar-brand1 m-0 px-2">Missing Tools Detection</h1></span>
+       
+    </div>
+</nav>
+
+<!-- live video capture -->
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card marginTop">
+                <div class="card-body">
+                    <button class="btn btn-outline-success w-100 mb-3">START!</button>
+                    <button class="btn btn-outline-danger w-100 mb-3">STOP!</button>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item list-group-item-action">Camera 1 is live</li>
+                        <li class="list-group-item list-group-item-action">Camera 2 is on halt</li>
+                        <li class="list-group-item list-group-item-action">Camera 3 is live</li>
+                        <li class="list-group-item list-group-item-action">Camera 4 is live</li>
+                      </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="row gap" *ngIf="!error">
+                <div class="col-md-6 middleEl">
+                    <span>
+                        <video *ngIf="!isCaptured" #video id="video" [width]="WIDTH" autoplay></video>
+                        <canvas *ngIf="isCaptured" #canvas id="canvas" [width]="WIDTH"></canvas>
+                        <p class="text-center">Number of missing tools: 0</p>
+                    </span>
+                </div>
+                <div class="col-md-6 middleEl">
+                    <span>
+                    <video *ngIf="!isCaptured" #video1 id="video1" [width]="WIDTH" autoplay></video>
+                    <canvas *ngIf="isCaptured" #canvas1 id="canvas1" [width]="WIDTH"></canvas>
+                    <p class="text-center">Number of missing tools: 0</p>
+                </span>
+                </div>
+            </div>
+            <div class="row gap" *ngIf="!error">
+                <div class="col-md-6 middleEl">
+                <span>
+                    <video *ngIf="!isCaptured" #video2 id="video2" [width]="WIDTH" autoplay></video>
+                    <canvas *ngIf="isCaptured" #canvas2 id="canvas2" [width]="WIDTH"></canvas>
+                    <p class="text-center">Number of missing tools: 0</p>
+                </span>
+                </div>
+                <div class="col-md-6 middleEl">
+                <span>
+                    <video *ngIf="!isCaptured" #video3 id="video3" [width]="WIDTH" autoplay></video>
+                    <canvas *ngIf="isCaptured" #canvas3 id="canvas3" [width]="WIDTH"></canvas>
+                    <p class="text-center">Number of missing tools: 0</p>
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <button class="btn btn-primary" (click)="capture()">Snap Photo</button> -->
+
+
+
+<!-- <ul class="list-unstyled">
+    <li *ngFor="let src of captures; let idx = index" (click)="setPhoto(idx)">
+        <img [src]="src" height="50" />
+    </li>
+</ul> -->
+<!-- <div class="row">
+    <div class="col-md-6">
+        <canvas ngIf="" #canvas id="canvas" [width]="WIDTH" [height]="HEIGHT"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas ngIf="" #canvas1 id="canvas1" [width]="WIDTH" [height]="HEIGHT"></canvas>
+    </div>
+</div> -->
+<!-- <div class="snap-container">
+    <button class="btn btn-danger" *ngIf="isCaptured" (click)="removeCurrent()">Take Another</button>
+
+    <div *ngIf="error" class="text-danger mt-4">
+        {{ error }}. Please click refresh on stackblitz
+        <div class="mt-5">
+            bjvj
+            <img src="https://trungk18.com/7e0976255739e721501803ee074f1f94/camera.gif" />
+        </div>
+    </div>
+</div> -->
