@@ -1,109 +1,143 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, NgZone, OnInit, Output } from '@angular/core';
+import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { Subject, Observable, async } from 'rxjs';
+import { ApiBaseUrl } from './app.api';
+import { AppService } from './app.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit {
   title = 'RajeshApp';
-  WIDTH = 260;
-  // HEIGHT = 180;
 
-  @ViewChild("video")
-  public video0!: ElementRef;
-  @ViewChild("video1")
-  public video1!: ElementRef;
-  @ViewChild("video2")
-  public video2!: ElementRef;
-  @ViewChild("video3")
-  public video3!: ElementRef;
+  // toggle webcam on/off
+  public showWebcam = true;
+  public allowCameraSwitch = false;
+  public multipleWebcamsAvailable = false;
+  public deviceId!: string;
+  public mirrorImageStr: string = " selfie view";
+  public videoOptions: MediaTrackConstraints = {
+    width: { exact: 160 },
+    height: { exact: 100 }
+  };
+  public startStop: boolean = false;
+  public errors: WebcamInitError[] = [];
 
-  @ViewChild("canvas")
-  public canvas0!: ElementRef;
-  @ViewChild("canvas1")
-  public canvas1!: ElementRef;
-  @ViewChild("canva2")
-  public canvas2!: ElementRef;
-  @ViewChild("canvas3")
-  public canvas3!: ElementRef;
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  // switch to next / previous / specific webcam; true/false: forward/backwards, string: deviceId
+  private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
+  htmlImage: string = '../assets/Badge_of_the_Indian_Air_Force.png';
+  htmlCount: number = 0;
+  numberOfDevices!: number;
+  counter = 0
+  i1 = new HolderClass(0, "../assets/Badge_of_the_Indian_Air_Force.png");
+  i2 = new HolderClass(0, "../assets/Badge_of_the_Indian_Air_Force.png");
+  i3 = new HolderClass(0, "../assets/Badge_of_the_Indian_Air_Force.png");
+  i4 = new HolderClass(0, "../assets/Badge_of_the_Indian_Air_Force.png");
+  list:Array<HolderClass> = [this.i1,this.i2,this.i3,this.i4]
 
-  captures: string[] = [];
-  error: any;
-  isCaptured!: boolean;
-  stream0!: MediaStream;
-  stream1!: MediaStream;
-  stream2!: MediaStream;
-  stream3!: MediaStream;
 
-  async ngAfterViewInit() {
-    await this.setupDevices();
+  constructor(private _service: AppService, public ngZone: NgZone) {
   }
 
-  async setupDevices() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      try {
-        // const stream = await navigator.mediaDevices.getUserMedia({
-        //   video: true
-        // });
-        // if (stream) {
-        //   this.video.nativeElement.srcObject = stream;
-        //   this.video.nativeElement.play();
-        //   this.error = null;
-        // } else {
-        //   this.error = "You have no output video device";
-        // }
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const cameras = devices.filter(device => device.kind === 'videoinput');
-        const constraints0 = { audio: false, video: { deviceId: cameras[0].deviceId } };
-        const constraints1 = { audio: false, video: { deviceId: cameras[1].deviceId } };
-        const constraints2 = { audio: false, video: { deviceId: cameras[1].deviceId } };
-        const constraints3 = { audio: false, video: { deviceId: cameras[0].deviceId } };
-        this.stream0 = await navigator.mediaDevices.getUserMedia(constraints0);
-        this.stream1 = await navigator.mediaDevices.getUserMedia(constraints1);
-        this.stream2 = await navigator.mediaDevices.getUserMedia(constraints2);
-        this.stream3 = await navigator.mediaDevices.getUserMedia(constraints3);
-            this.video0.nativeElement.srcObject = this.stream0;
-            this.video1.nativeElement.srcObject = this.stream1;
-            this.video2.nativeElement.srcObject = this.stream2;
-            this.video3.nativeElement.srcObject = this.stream3;
-            this.video0.nativeElement.play();
-            this.video1.nativeElement.play();
-            this.video2.nativeElement.play();
-            this.video3.nativeElement.play();
-            this.error = null;
-      } catch (e) {
-        this.error = e;
+  public ngOnInit(): void {
+    WebcamUtil.getAvailableVideoInputs()
+      .then((mediaDevices: MediaDeviceInfo[]) => {
+        this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
+        this.numberOfDevices = mediaDevices.length;
+      });
+  }
+
+  public triggerSnapshot(): void {
+    this.trigger.next();
+  }
+
+  public toggleWebcam(): void {
+    this.showWebcam = !this.showWebcam;
+  }
+
+  public handleInitError(error: WebcamInitError): void {
+    this.errors.push(error);
+  }
+
+  public showNextWebcam(directionOrDeviceId: boolean | string): void {
+    // true => move forward through devices
+    // false => move backwards through devices
+    // string => move to device with given deviceId
+    this.nextWebcam.next(directionOrDeviceId);
+  }
+
+  public async handleImage(webcamImage: WebcamImage): Promise<void> {
+    this.htmlImage = webcamImage.imageAsDataUrl;
+    console.log(webcamImage.imageAsDataUrl);
+    let reqBody: any = {
+      image: webcamImage.imageAsDataUrl
+    }
+    this._service.postData(ApiBaseUrl.api, reqBody).subscribe(
+      (res: any) => {
+        if (this.startStop) {
+          if (res) {
+            // let array = Array.from(Array(3), () => ({ first_name: '', last_name: '' }))
+            //   this.htmlImage = res.image;
+            // this.htmlCount = res.count;
+            this.list[this.counter] = new HolderClass(res.count, res.image);   
+            console.log(this.list);
+              this.showNextWebcam(true);
+              setTimeout(() => {
+                this.triggerSnapshot();
+              }, 500)
+            this.counter++;
+            if (this.counter == this.numberOfDevices) {
+              this.counter = 0;
+            }
+          }
+        } else {
+          console.log('services stopped');
+        }
+      },
+      (err: any) => {
+        console.log(err);
+        this.startStop = false;
       }
+    )
+  }
+
+  public startProcess() {
+    this.startStop = !this.startStop;
+    console.log(this.startStop);
+    if (this.startStop) {
+      this.triggerSnapshot();
     }
   }
 
-  capture() {
-    this.drawImageToCanvas(this.video0.nativeElement,this.video1.nativeElement);
-    this.captures.push(this.canvas0.nativeElement.toDataURL("image/png"));
-    this.captures.push(this.canvas1.nativeElement.toDataURL("image/png"));
-    this.isCaptured = true;
+
+
+
+
+
+
+  public cameraWasSwitched(deviceId: string): void {
+    console.log('active device: ' + deviceId);
+    this.deviceId = deviceId;
   }
 
-  removeCurrent() {
-    this.isCaptured = false;
+  public get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
   }
 
-  setPhoto(idx: number) {
-    this.isCaptured = true;
-    var image0 = new Image();
-    var image1 = new Image();
-    image0.src = this.captures[idx];
-    image1.src = this.captures[idx];
-    this.drawImageToCanvas(image0,image1);
+  public get nextWebcamObservable(): Observable<boolean | string> {
+    return this.nextWebcam.asObservable();
   }
+}
 
-  drawImageToCanvas(image0: any, image1: any) {
-    this.canvas0.nativeElement
-      .getContext("2d")
-      .drawImage(image0, 0, 0, this.WIDTH);
-    this.canvas1.nativeElement
-      .getContext("2d")
-      .drawImage(image1, 0, 0, this.WIDTH);
-  }
+class HolderClass {
+  count: any;
+  image: any; 
+  constructor(count: number, image: String) {
+    this.count = count;
+    this.image = image
+   }
 }

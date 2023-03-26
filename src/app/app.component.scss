@@ -1,32 +1,52 @@
-// .snap-container {
-//     margin-top: 16px;
-//     margin-bottom: 16px;
-//     text-align: center;
-//   }
-  
-//   .list-unstyled {
-//     list-style: none;
-//   }
-  
-//   .list-unstyled li {
-//     display: inline-block;
-//     padding: 5px 10px;
-//     cursor: pointer;
-//   }
-  
-//   .gap{
-//     gap: 2rem;
-//   }
-  .middleEl{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 1rem;
+.actionBtn {
+  font-size: 4em;
+  cursor: pointer;
+}
+
+.snapshot {
+  text-align: center;
+  img {
+    max-width: 800px;
+    max-height: 800px;
   }
-  .marginTop{
-    margin-top: 1rem;
-    height: 97%;
+}
+
+ul.links {
+  padding-bottom: 20px;
+}
+
+.htmlImageparent{
+  display: flex;
+  justify-content: center;
+}
+.htmlImagechild{
+  width: 100%;
+}
+::ng-deep .webcam-wrapper .camera-switch{
+  display: none !important;
+}
+::ng-deep{
+  .webcam-wrapper{
+    width: 100px !important;
+    transform: scale(0.4);
   }
-  .navbar-brand1{
-    font-size: xx-large;
-  }
+}
+.mb2{
+  padding-bottom: 2em;
+}
+.flexDirectioncolumn{
+  flex-direction: column;
+}
+.navbar-brand{
+  display: flex;
+  align-items: center;
+}
+.paddingHaldem{
+  padding: 0.5em;
+}
+// .text-card{
+//   background-color: azure;
+// }
+.myCard{
+  height: 32.5em;
+}
