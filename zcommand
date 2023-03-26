@@ -1,0 +1,5 @@
+npm install -g @angular/cli
+npm i--force
+ng s --port 3650 -o
+ng s -o
+ng config -g cli.warnings.versionMismatch false

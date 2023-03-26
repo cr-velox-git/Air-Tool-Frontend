@@ -1,3 +1,3 @@
 export class ApiBaseUrl { 
-    public static api = 'http://192.168.29.96:5000/detectv5';
+    public static api = 'http://127.0.0.1:8080/detectv5';
  }

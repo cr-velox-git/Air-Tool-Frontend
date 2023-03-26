@@ -33,10 +33,10 @@ export class AppComponent implements OnInit {
   htmlCount: number = 0;
   numberOfDevices!: number;
   counter = 0
-  i1 = new HolderClass(0, "../assets/Badge_of_the_Indian_Air_Force.png");
-  i2 = new HolderClass(0, "../assets/Badge_of_the_Indian_Air_Force.png");
-  i3 = new HolderClass(0, "../assets/Badge_of_the_Indian_Air_Force.png");
-  i4 = new HolderClass(0, "../assets/Badge_of_the_Indian_Air_Force.png");
+  i1 = new HolderClass(0, "../assets/badge_295_185.png");
+  i2 = new HolderClass(0, "../assets/badge_295_185.png");
+  i3 = new HolderClass(0, "../assets/badge_295_185.png");
+  i4 = new HolderClass(0, "../assets/badge_295_185.png");
   list:Array<HolderClass> = [this.i1,this.i2,this.i3,this.i4]
 
 
